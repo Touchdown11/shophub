@@ -49,6 +49,23 @@
         });
     }
 
+    /* The rail has no scrollbar (see admin.css), so signal overflow with a soft
+       fade instead: .is-scrollable while the list is longer than the viewport,
+       .at-top / .at-bottom to keep the edge you are looking at crisp. */
+    const nav = $('.admin-nav');
+    if (nav) {
+        const paintNavEdges = () => {
+            const scrollable = nav.scrollHeight - nav.clientHeight > 2;
+            nav.classList.toggle('is-scrollable', scrollable);
+            nav.classList.toggle('at-top', nav.scrollTop <= 2);
+            nav.classList.toggle('at-bottom', nav.scrollTop + nav.clientHeight >= nav.scrollHeight - 2);
+        };
+        paintNavEdges();
+        nav.addEventListener('scroll', paintNavEdges, { passive: true });
+        window.addEventListener('resize', paintNavEdges);
+        window.addEventListener('orientationchange', paintNavEdges);
+    }
+
     /* select-all checkbox in product tables */
     $$('[data-check-all]').forEach((master) => {
         master.addEventListener('change', () => {
