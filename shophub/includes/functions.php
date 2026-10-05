@@ -12,6 +12,25 @@ if (!defined('SHOPHUB_PORTAL')) {
     define('SHOPHUB_PORTAL', 'store');
 }
 
+/*
+ * mbstring is enabled in XAMPP and most hosts, but a bare PHP build can lack it.
+ * These two helpers are the only multibyte functions the app uses (truncating
+ * descriptions and cutting long words), so a small fallback keeps the whole
+ * portal working instead of throwing a fatal error on the dashboard.
+ */
+if (!function_exists('mb_strlen')) {
+    function mb_strlen(string $text, ?string $encoding = null): int
+    {
+        return strlen($text);
+    }
+}
+if (!function_exists('mb_substr')) {
+    function mb_substr(string $text, int $start, ?int $length = null, ?string $encoding = null): string
+    {
+        return $length === null ? substr($text, $start) : substr($text, $start, $length);
+    }
+}
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 

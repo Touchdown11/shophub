@@ -918,6 +918,7 @@ select[data-option-select] {
     background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; color: var(--ink);
 }
 .rich-text hr { border: 0; border-top: 1px solid var(--line); margin: 1.6rem 0; }
+hr.rule { border: 0; border-top: 1px solid var(--line); margin: 1.4rem 0; }
 
 .reviews-list { display: grid; gap: .2rem; }
 

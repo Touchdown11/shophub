@@ -4,45 +4,86 @@
 
 .admin-body { background: #0a0a0c; }
 
-.admin-shell { display: grid; grid-template-columns: 258px 1fr; min-height: 100vh; }
+.admin-shell { display: grid; grid-template-columns: 272px 1fr; min-height: 100vh; }
 
 /* ------------------------------------------------------------------ sidebar */
 
 .admin-sidebar {
-    background: #0e0e11;
-    border-right: 1px solid var(--line);
+    background: linear-gradient(180deg, #0e0e12, #0b0b0e);
+    border-right: 1px solid rgba(255, 255, 255, .07);
     display: flex; flex-direction: column;
-    padding: 1.2rem 0;
+    padding: 1.1rem 1rem 1rem;
     position: sticky; top: 0; height: 100vh;
     z-index: 40;
 }
-.admin-logo {
-    display: flex; align-items: center; gap: .6rem;
-    padding: 0 1.2rem 1.2rem; border-bottom: 1px solid var(--line); margin-bottom: 1rem;
-    color: #fff;
-}
-.admin-logo svg { width: 38px; height: 32px; }
-.admin-logo span { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; line-height: 1; }
-.admin-logo span b { color: var(--gold); }
-.admin-logo span em { display: block; font-family: var(--sans); font-size: .64rem; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); font-style: normal; margin-top: .2rem; }
 
-.admin-nav { display: flex; flex-direction: column; gap: .15rem; padding: 0 .7rem; flex: 1; overflow-y: auto; }
-.admin-link {
-    display: flex; align-items: center; gap: .75rem;
-    padding: .62rem .8rem; border-radius: 10px;
-    color: var(--ink-soft); font-size: .92rem; font-weight: 600;
-    border: 1px solid transparent;
-    transition: all .16s var(--ease);
+/* Brand lock-up: mark + wordmark + the ADMIN eyebrow, exactly where the eye
+   lands first — the top-left corner of the app. */
+.admin-brand {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .2rem .35rem 1.05rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    color: #fff; text-decoration: none;
 }
-.admin-link svg { width: 19px; height: 19px; flex-shrink: 0; }
-.admin-link:hover { background: rgba(255, 255, 255, .045); color: var(--ink); }
-.admin-link.is-active { background: rgba(255, 196, 0, .13); color: var(--gold); border-color: rgba(255, 196, 0, .3); }
-.admin-link.danger:hover { color: var(--danger); background: rgba(255, 92, 92, .1); }
+.admin-brand-mark { display: block; width: 42px; height: 42px; flex-shrink: 0; border-radius: 13px; overflow: hidden; box-shadow: 0 8px 20px rgba(255, 196, 0, .22); }
+.admin-brand-mark svg { display: block; width: 100%; height: 100%; }
+.admin-brand-text { display: flex; flex-direction: column; min-width: 0; }
+.admin-brand-text strong {
+    font-family: var(--serif); font-size: 1.34rem; font-weight: 700; line-height: 1.1;
+    letter-spacing: -.01em; color: #fff;
+}
+.admin-brand-text strong b { color: var(--gold); font-weight: 700; }
+.admin-brand-text em {
+    font-family: var(--sans); font-style: normal;
+    font-size: .64rem; font-weight: 700; letter-spacing: .34em; text-transform: uppercase;
+    color: var(--gold); opacity: .85; margin-top: .22rem;
+}
+
+.admin-nav { display: flex; flex-direction: column; gap: .3rem; padding: 1rem 0 0; flex: 1; overflow-y: auto; }
+
+.admin-nav-link,
+.admin-link {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .78rem .85rem; border-radius: 14px;
+    color: var(--ink-soft); font-size: .94rem; font-weight: 600;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: background .16s var(--ease), color .16s var(--ease), border-color .16s var(--ease);
+}
+.admin-nav-link svg { width: 20px; height: 20px; flex-shrink: 0; opacity: .92; }
+.admin-nav-link span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-nav-link:hover { background: rgba(255, 255, 255, .05); color: #fff; }
+.admin-nav-link.is-active {
+    background: linear-gradient(90deg, rgba(255, 196, 0, .19), rgba(255, 196, 0, .06));
+    border-color: rgba(255, 196, 0, .34);
+    color: var(--gold);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 8px 20px rgba(255, 196, 0, .07);
+}
+.admin-nav-link.is-active svg { opacity: 1; }
+.admin-nav-link.danger:hover, .admin-link.danger:hover { color: var(--danger); background: rgba(255, 92, 92, .1); }
+
 .admin-badge {
     margin-left: auto; background: var(--gold); color: #14140a;
-    border-radius: 999px; font-size: .68rem; font-weight: 800; padding: .05rem .45rem; font-style: normal;
+    border-radius: 999px; font-size: .72rem; font-weight: 800;
+    padding: .1rem .5rem; font-style: normal; line-height: 1.5;
+    box-shadow: 0 3px 10px rgba(255, 196, 0, .3);
 }
-.admin-sidebar-foot { padding: .8rem .7rem 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: .15rem; }
+
+/* Pinned bottom actions, split from the nav by a hairline rule. */
+.admin-sidebar-foot {
+    margin-top: auto; padding: .9rem 0 0;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+    display: flex; flex-direction: column; gap: .3rem;
+}
+.admin-sidebar-user {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .15rem .5rem .8rem; min-width: 0;
+}
+.admin-sidebar-user .admin-user-text { min-width: 0; }
+.admin-sidebar-user .admin-user-text strong { font-size: .86rem; }
+.admin-sidebar-user .admin-user-text em { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-sidebar-foot .admin-nav-link { color: #a5a5af; }
+.admin-sidebar-foot .admin-nav-link:hover { color: #fff; }
 
 /* ---------------------------------------------------------------- main area */
 
@@ -50,17 +91,61 @@
 
 .admin-topbar {
     position: sticky; top: 0; z-index: 30;
-    display: flex; align-items: center; gap: 1rem;
-    padding: 1rem 1.6rem; border-bottom: 1px solid var(--line);
+    display: none; align-items: center; gap: .9rem;
+    padding: .7rem 1.2rem; border-bottom: 1px solid var(--line);
     background: rgba(10, 10, 12, .92); backdrop-filter: blur(12px);
 }
-.admin-topbar h1 { font-size: 1.35rem; margin: 0; }
-.admin-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+.admin-topbar-title { font-family: var(--serif); font-size: 1.02rem; color: #fff; }
+.admin-topbar-title strong { font-weight: 700; }
+.admin-topbar-title strong b { color: var(--gold); }
+.admin-topbar-spacer { flex: 1; }
 .admin-burger { display: none; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 11px; background: none; cursor: pointer; padding: 11px 10px; }
 .admin-burger span { display: block; height: 2px; background: var(--ink); }
 .admin-burger span + span { margin-top: 5px; }
+.admin-topbar-mark { display: none; }
 
-.admin-content { padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem; }
+.admin-user { display: flex; align-items: center; gap: .6rem; }
+.admin-user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255, 196, 0, .14); border: 1px solid rgba(255, 196, 0, .35);
+    color: var(--gold); font-weight: 700; font-size: .92rem;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.admin-user-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.admin-user-text strong { font-size: .88rem; }
+.admin-user-text em { font-style: normal; font-size: .74rem; color: var(--muted); }
+
+.admin-ghost-link {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .45rem .75rem; border-radius: 10px;
+    color: var(--ink-soft); font-size: .86rem; font-weight: 600;
+    border: 1px solid transparent; text-decoration: none;
+    transition: all .16s var(--ease);
+}
+.admin-ghost-link:hover { color: var(--gold); border-color: rgba(255, 196, 0, .3); background: rgba(255, 196, 0, .08); }
+
+.admin-page-head {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+    flex-wrap: wrap; padding: 1.7rem 1.6rem .15rem;
+}
+.admin-page-head h1 {
+    font-family: var(--serif); font-size: clamp(1.6rem, 2.4vw, 2.05rem);
+    line-height: 1.1; margin: 0; letter-spacing: -.01em;
+}
+.admin-subtitle { margin: .35rem 0 0; color: var(--muted); font-size: .89rem; }
+.admin-page-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+
+.admin-content { padding: 1.25rem 1.6rem 1.6rem; display: flex; flex-direction: column; gap: 1.45rem; }
+
+/* The KPI row and the panels beneath it are separate blocks — make sure they
+   never touch. Inside .admin-content the flex gap already spaces them, so the
+   margin only applies when a block sits in a container without that gap. */
+.stat-grid + .admin-cols,
+.stat-grid + .admin-stack,
+.stat-grid + .panel { margin-top: 1.45rem; }
+.admin-content > .stat-grid + .admin-cols,
+.admin-content > .stat-grid + .admin-stack,
+.admin-content > .stat-grid + .panel { margin-top: 0; }
 
 /* -------------------------------------------------------------------- stats */
 
@@ -87,6 +172,7 @@
     padding: .35rem .9rem; min-width: 15rem; max-width: 100%;
 }
 .table-filter:focus { outline: 2px solid rgba(255, 196, 0, .45); outline-offset: 1px; }
+.panel-head .table-filter { flex: 0 1 20rem; min-width: 12rem; }
 
 .admin-cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.2rem; align-items: start; }
 .admin-cols-form { grid-template-columns: 1.6fr 1fr; }
@@ -180,7 +266,19 @@
 
 /* -------------------------------------------------------------- admin login */
 
+/* Public shell (only login.php uses it): the card sits dead centre. */
+.admin-login { display: grid; place-items: center; min-height: 100vh; padding: 2rem; }
+
 .admin-login-body { display: grid; place-items: center; min-height: 100vh; padding: 2rem; }
+
+.admin-login-brand { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
+.admin-login-brand svg { display: block; width: 64px; height: 54px; margin-bottom: .9rem; }
+.admin-login-brand span { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1; }
+.admin-login-brand span b { color: var(--gold); }
+.admin-login-brand em {
+    font-style: normal; font-size: .64rem; font-weight: 700;
+    letter-spacing: .3em; text-transform: uppercase; color: var(--muted); margin-top: .45rem;
+}
 .admin-login-card {
     width: min(420px, 100%); background: linear-gradient(180deg, var(--surface-2), var(--black-soft));
     border: 1px solid var(--line-strong); border-radius: var(--radius-lg); padding: 2.2rem; text-align: center;
@@ -196,17 +294,22 @@
 @media (max-width: 1080px) {
     .admin-shell { grid-template-columns: 1fr; }
     .admin-sidebar {
-        position: fixed; inset: 0 auto 0 0; width: 258px; height: 100vh;
+        position: fixed; inset: 0 auto 0 0; width: 272px; height: 100vh;
         transform: translateX(-100%); transition: transform .25s var(--ease);
+        box-shadow: 0 0 40px rgba(0, 0, 0, .5);
     }
     .admin-sidebar.is-open { transform: none; }
+    .admin-topbar { display: flex; }
     .admin-burger { display: block; }
+    .admin-topbar-mark { display: block; width: 32px; height: 32px; border-radius: 10px; overflow: hidden; }
+    .admin-topbar-mark svg { display: block; width: 100%; height: 100%; }
     .admin-cols, .admin-cols-form { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 700px) {
-    .admin-topbar { padding: .8rem 1rem; }
-    .admin-topbar-right .small { display: none; }
+    .admin-topbar { padding: .7rem .9rem; }
+    .admin-topbar-title { display: none; }
+    .admin-page-head { padding: 1.2rem 1rem .1rem; }
     .admin-content { padding: 1rem; }
     .admin-toolbar input[type="search"], .admin-toolbar select { max-width: none; flex: 1 1 140px; }
 }
@@ -374,6 +477,26 @@
 .admin-demo-hint code { background: var(--black-soft); padding: .1rem .4rem; border-radius: 5px; color: var(--gold-soft); }
 
 /* ------------------------------------------------------------------ shell */
+
+/* Flash messages: the portal's dismiss button (the storefront names its own
+   .flash-close, and this app is separate — so style both names here). */
+.flash-x, .flash-close {
+    background: none; border: 0; color: inherit; font-size: 1.2rem; line-height: 1;
+    cursor: pointer; opacity: .6; margin-left: auto; padding: 0 .2rem;
+}
+.flash-x:hover, .flash-close:hover { opacity: 1; }
+.admin-main .flash { display: flex; align-items: center; gap: .6rem; }
+
+/* Empty states (admin_empty() helper). */
+.empty {
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    text-align: center; padding: 2.6rem 1.5rem; color: var(--muted);
+    border: 1px dashed var(--line-strong); border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, .015);
+}
+.empty svg { opacity: .5; }
+.empty h3 { margin: 0; color: var(--ink); font-size: 1.05rem; }
+.empty p { margin: 0; }
 
 .admin-footer {
     display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;

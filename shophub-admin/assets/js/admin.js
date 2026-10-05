@@ -22,17 +22,30 @@
     }
 
     /* sidebar on small screens */
-    const burger = $('[data-admin-burger]');
-    if (burger) {
+    const burger  = $('[data-admin-burger]');
+    const sidebar = $('[data-admin-sidebar]');
+    if (burger && sidebar) {
+        const setOpen = (open) => {
+            sidebar.classList.toggle('is-open', open);
+            burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+
         burger.addEventListener('click', (event) => {
             event.stopPropagation();
-            $('[data-admin-sidebar]').classList.toggle('is-open');
+            setOpen(!sidebar.classList.contains('is-open'));
+        });
+
+        // Tapping a link (or anywhere outside) closes the drawer again.
+        sidebar.addEventListener('click', (event) => {
+            if (event.target.closest('a') && window.innerWidth <= 1080) setOpen(false);
         });
         document.addEventListener('click', (event) => {
-            const sidebar = $('[data-admin-sidebar]');
-            if (sidebar && sidebar.classList.contains('is-open') && !event.target.closest('[data-admin-sidebar]') && !event.target.closest('[data-admin-burger]')) {
-                sidebar.classList.remove('is-open');
+            if (sidebar.classList.contains('is-open') && !event.target.closest('[data-admin-sidebar]')) {
+                setOpen(false);
             }
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') setOpen(false);
         });
     }
 
