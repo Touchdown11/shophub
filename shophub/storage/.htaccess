@@ -1,0 +1,2 @@
+# Block web access to logs and the SQLite demo database.
+Require all denied

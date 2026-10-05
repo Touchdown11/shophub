@@ -1,0 +1,21 @@
+# ShopHub — Apache configuration (XAMPP)
+Options -Indexes
+DirectoryIndex index.php
+
+# Pretty error pages are optional; keep PHP notices out of the markup in production.
+php_flag display_errors off
+
+# Never serve dotfiles or config over the web.
+<FilesMatch "^\.|config\.local\.php$|\.sqlite$|\.log$">
+    Require all denied
+</FilesMatch>
+
+# Cache static assets for a week.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|svg|png|jpe?g|webp|gif|woff2?)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>
+
+# Send everything that is missing to the storefront instead of a raw 404.
+ErrorDocument 404 /shophub/index.php
