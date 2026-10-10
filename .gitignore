@@ -6,7 +6,6 @@
 # Local database / environment overrides — never commit these.
 shophub/includes/config.local.php
 shophub-admin/includes/config.local.php
-shophub/README.md
 .env
 .env.*
 
