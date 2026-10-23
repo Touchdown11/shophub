@@ -8,7 +8,7 @@
 
 Two separate applications: a customer storefront and a staff back office.
 
-[**🛒 Live demo — storefront**](https://YOUR-DOMAIN.example/shophub/) &nbsp;·&nbsp; [**🔐 Live demo — staff portal**](https://YOUR-DOMAIN.example/shophub-admin/)
+[**🛒 Live demo — storefront**](https://shophubstore.freedev.app/shophub/) &nbsp;·&nbsp; [**🔐 Live demo — staff portal**](https://shophubstore.freedev.app/shophub-admin/)
 
 `admin@shophub.test` / `admin123` — staff portal &nbsp;|&nbsp; `amara@example.com` / `password123` — customer
 
