@@ -17,6 +17,10 @@ if (!$publicShell) {
 $admin   = $publicShell ? null : auth_user();
 $current = basename((string)($_SERVER['SCRIPT_NAME'] ?? 'index.php'));
 
+/* Detail screens keep their section lit in the rail. */
+$navParent = ['order-view.php' => 'orders.php'];
+$currentNav = $navParent[$current] ?? $current;
+
 /* Badge counts: only what needs a human. */
 $badges = [
     'orders.php'   => (int)Database::value("SELECT COUNT(*) FROM orders WHERE status IN ('pending','processing')"),
@@ -28,19 +32,28 @@ if ($publicShell) {
     $badges = [];
 }
 
+/* Day-to-day items first, in the order they are reached for; the two admin
+   utilities (import/export, settings) sit at the bottom of the rail. */
 $nav = [
     'Dashboard'      => ['index.php', 'grid'],
     'Products'       => ['products.php', 'box'],
     'Categories'     => ['categories.php', 'tags'],
     'Orders'         => ['orders.php', 'cart'],
     'Reports'        => ['reports.php', 'chart'],
-    'Customers'      => ['customers.php', 'users'],
     'Reviews'        => ['reviews.php', 'star'],
+    'Customers'      => ['customers.php', 'users'],
     'Coupons'        => ['coupons.php', 'ticket'],
     'Messages'       => ['messages.php', 'mail'],
     'Import / Export' => ['import-export.php', 'upload'],
     'Settings'       => ['settings.php', 'settings'],
 ];
+
+/* "ShopHub" with the second half in gold — the same wordmark the shop uses. */
+$brandName = (string)setting('store_name', cfg('app.name', 'ShopHub'));
+$hubAt     = stripos($brandName, 'hub');
+$brandHtml = $hubAt === false
+    ? e($brandName)
+    : e(substr($brandName, 0, $hubAt)) . '<b>' . e(substr($brandName, $hubAt)) . '</b>';
 
 $pageTitle    = $pageTitle ?? 'Dashboard';
 $pageSubtitle = $pageSubtitle ?? '';
@@ -67,40 +80,30 @@ $flashes      = take_flashes_html();
     <?= $content ?? '' ?>
 <?php else: ?>
 
-<header class="admin-topbar">
-    <button type="button" class="admin-burger" data-admin-nav aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-    </button>
-
-    <a class="admin-brand" href="<?= e(base_url('index.php')) ?>">
-        <span class="admin-brand-mark">S</span>
-        <span class="admin-brand-text">
-            <strong><?= e((string)setting('store_name', cfg('app.name', 'ShopHub'))) ?></strong>
-            <em>Staff portal</em>
-        </span>
-    </a>
-
-    <div class="admin-topbar-spacer"></div>
-
-    <a class="admin-ghost-link" href="<?= e(store_url('index.php')) ?>" target="_blank" rel="noopener">
-        <?= admin_icon('external', 16) ?> View storefront
-    </a>
-
-    <div class="admin-user">
-        <span class="admin-user-avatar"><?= e(strtoupper(substr((string)($admin['name'] ?? 'A'), 0, 1))) ?></span>
-        <span class="admin-user-text">
-            <strong><?= e((string)($admin['name'] ?? 'Staff')) ?></strong>
-            <em><?= e((string)($admin['email'] ?? '')) ?></em>
-        </span>
-        <a class="admin-ghost-link" href="<?= e(base_url('logout.php')) ?>"><?= admin_icon('logout', 16) ?> Sign out</a>
-    </div>
-</header>
-
 <div class="admin-shell">
     <aside class="admin-sidebar" data-admin-sidebar>
+        <a class="admin-brand" href="<?= e(base_url('index.php')) ?>">
+            <span class="admin-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 44 44">
+                    <defs>
+                        <linearGradient id="shubMark" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#ffd451"/>
+                            <stop offset="1" stop-color="#ffc400"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="44" height="44" rx="13" fill="url(#shubMark)"/>
+                    <text x="22" y="30" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="24" fill="#0b0b0d">S</text>
+                </svg>
+            </span>
+            <span class="admin-brand-text">
+                <strong><?= $brandHtml ?></strong>
+                <em>Admin</em>
+            </span>
+        </a>
+
         <nav class="admin-nav">
             <?php foreach ($nav as $label => [$file, $icon]): ?>
-                <a href="<?= e(base_url($file)) ?>" class="admin-nav-link<?= $current === $file ? ' is-active' : '' ?>">
+                <a href="<?= e(base_url($file)) ?>" class="admin-nav-link<?= $currentNav === $file ? ' is-active' : '' ?>">
                     <?= admin_icon($icon) ?>
                     <span><?= e($label) ?></span>
                     <?php if (!empty($badges[$file])): ?><b class="admin-badge"><?= (int)$badges[$file] ?></b><?php endif; ?>
@@ -109,12 +112,49 @@ $flashes      = take_flashes_html();
         </nav>
 
         <div class="admin-sidebar-foot">
-            <p class="muted small">Signed in as <strong><?= e((string)($admin['email'] ?? '')) ?></strong></p>
-            <p class="muted small">Session ends after <?= (int)cfg('app.admin_session_minutes', 120) ?> minutes idle.</p>
+            <div class="admin-sidebar-user">
+                <span class="admin-user-avatar"><?= e(strtoupper(substr((string)($admin['name'] ?? 'A'), 0, 1))) ?></span>
+                <span class="admin-user-text">
+                    <strong><?= e((string)($admin['name'] ?? 'Staff')) ?></strong>
+                    <em><?= e((string)($admin['email'] ?? '')) ?></em>
+                </span>
+            </div>
+
+            <a class="admin-nav-link" href="<?= e(store_url('index.php')) ?>" target="_blank" rel="noopener">
+                <?= admin_icon('external') ?><span>View storefront</span>
+            </a>
+            <a class="admin-nav-link danger" href="<?= e(base_url('logout.php')) ?>">
+                <?= admin_icon('logout') ?><span>Sign out</span>
+            </a>
         </div>
     </aside>
 
     <main class="admin-main" id="main">
+        <header class="admin-topbar">
+            <button type="button" class="admin-burger" data-admin-burger aria-expanded="false" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+
+            <a class="admin-topbar-mark" href="<?= e(base_url('index.php')) ?>" aria-label="Dashboard">
+                <svg viewBox="0 0 44 44" aria-hidden="true">
+                    <rect width="44" height="44" rx="13" fill="#ffc400"/>
+                    <text x="22" y="30" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="24" fill="#0b0b0d">S</text>
+                </svg>
+            </a>
+
+            <span class="admin-topbar-title"><strong><?= $brandHtml ?></strong> staff</span>
+
+            <div class="admin-topbar-spacer"></div>
+
+            <div class="admin-user">
+                <span class="admin-user-avatar"><?= e(strtoupper(substr((string)($admin['name'] ?? 'A'), 0, 1))) ?></span>
+                <span class="admin-user-text">
+                    <strong><?= e((string)($admin['name'] ?? 'Staff')) ?></strong>
+                    <em><?= e((string)($admin['email'] ?? '')) ?></em>
+                </span>
+            </div>
+        </header>
+
         <div class="admin-page-head">
             <div>
                 <h1><?= e($pageTitle) ?></h1>
@@ -126,4 +166,6 @@ $flashes      = take_flashes_html();
         </div>
 
         <?= $flashes ?>
+
+        <div class="admin-content">
 <?php endif; ?>

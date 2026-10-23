@@ -1,0 +1,40 @@
+# ShopHub — .gitignore
+# Copy this file into the root of your repository as ".gitignore"
+# (the folder that contains shophub/ and shophub-admin/).
+
+# ---------------------------------------------------------------- secrets
+# Local database / environment overrides — never commit these.
+shophub/includes/config.local.php
+shophub-admin/includes/config.local.php
+.env
+.env.*
+
+# ---------------------------------------------------------------- runtime data
+# The demo database, the mail log and anything the app writes at runtime.
+shophub/storage/*.sqlite
+shophub/storage/*.sqlite3
+shophub/storage/*.db
+shophub/storage/mail.log
+shophub/storage/logs/
+shophub-admin/storage/*
+!shophub-admin/storage/.gitkeep
+
+# Uploaded product images (thousands of files, and they belong on the server).
+shophub/uploads/products/*
+!shophub/uploads/products/.gitkeep
+
+# ---------------------------------------------------------------- OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# ---------------------------------------------------------------- misc
+*.log
+*.tmp
+*.bak
+*.sql
+*.zip
+node_modules/

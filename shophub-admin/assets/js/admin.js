@@ -21,18 +21,116 @@
         }, 3200);
     }
 
-    /* sidebar on small screens */
-    const burger = $('[data-admin-burger]');
-    if (burger) {
+    /* ======================================================================
+       Rail: scrollbar-free scrolling, remembered position, revealing the
+       current page
+       ====================================================================== */
+
+    /* The rail hides its scrollbar (see admin.css), and browsers do not restore
+       the scroll position of a nested scroll container when you navigate. So
+       clicking Settings / Import-Export / Messages — the items at the bottom —
+       used to land on the next page with the rail back at the top, hiding the
+       link you had just chosen. Two guards fix it:
+         1. the position is remembered for the tab (sessionStorage);
+         2. the highlighted link is always scrolled into view on load.
+       Scrolling itself is untouched — wheel, touch, keyboard, all still work. */
+
+    const RAIL_SCROLL_KEY = 'shophub.admin.nav.scroll';
+
+    const nav     = $('.admin-nav');
+    const sidebar = $('[data-admin-sidebar]');
+    const burger  = $('[data-admin-burger]');
+
+    /* Soft fade at whichever edge has hidden content (paired with the mask
+       rules in admin.css). */
+    const navEdges = () => {
+        if (!nav) return;
+        nav.classList.toggle('is-scrollable', nav.scrollHeight - nav.clientHeight > 2);
+        nav.classList.toggle('at-top', nav.scrollTop <= 2);
+        nav.classList.toggle('at-bottom', nav.scrollTop + nav.clientHeight >= nav.scrollHeight - 2);
+    };
+
+    /* Move the rail the smallest amount that brings the active link into view. */
+    const revealActiveNav = () => {
+        if (!nav) return;
+        const active = nav.querySelector('.admin-nav-link.is-active');
+        if (!active) return;
+
+        const box     = nav.getBoundingClientRect();
+        const itemBox = active.getBoundingClientRect();
+        const top     = itemBox.top - box.top + nav.scrollTop;  // offset inside the scrolled content
+        const bottom  = top + itemBox.height;
+        const pad     = 10;
+
+        if (top - pad < nav.scrollTop) {
+            nav.scrollTop = Math.max(0, top - pad);
+        } else if (bottom + pad > nav.scrollTop + nav.clientHeight) {
+            nav.scrollTop = Math.min(nav.scrollHeight, bottom + pad - nav.clientHeight);
+        }
+        navEdges();
+    };
+
+    if (nav) {
+        let lastSave = 0;
+        const remember = (force = false) => {
+            const stamp = Date.now();
+            if (!force && stamp - lastSave < 200) return;   // throttle while scrolling
+            lastSave = stamp;
+            try {
+                sessionStorage.setItem(RAIL_SCROLL_KEY, String(nav.scrollTop));
+            } catch (err) { /* private mode — position just won't survive */ }
+        };
+
+        // 1. put the rail back where it was …
+        try {
+            const saved = sessionStorage.getItem(RAIL_SCROLL_KEY);
+            if (saved !== null) nav.scrollTop = Math.max(0, parseInt(saved, 10) || 0);
+        } catch (err) { /* private mode */ }
+
+        // 2. … then make sure the page you are on is actually visible.
+        revealActiveNav();
+        navEdges();
+
+        nav.addEventListener('scroll', () => { navEdges(); remember(); }, { passive: true });
+        window.addEventListener('resize', navEdges);
+        window.addEventListener('orientationchange', navEdges);
+
+        // Write synchronously before the browser follows a link or unloads.
+        nav.addEventListener('click', (event) => {
+            if (event.target.closest('.admin-nav-link')) remember(true);
+        });
+        window.addEventListener('pagehide', () => remember(true));
+
+        // Reveal the rail's own button (window.SHOPHUB) for other scripts.
+        window.ShopHubAdmin = Object.assign(window.ShopHubAdmin || {}, { revealActiveNav });
+    }
+
+    /* ------------------------------------------------- drawer on small screens */
+
+    if (burger && sidebar) {
+        const setOpen = (open) => {
+            sidebar.classList.toggle('is-open', open);
+            burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            // Opening the drawer should show the current page, not the top of the list.
+            if (open) revealActiveNav();
+        };
+
         burger.addEventListener('click', (event) => {
             event.stopPropagation();
-            $('[data-admin-sidebar]').classList.toggle('is-open');
+            setOpen(!sidebar.classList.contains('is-open'));
+        });
+
+        // Tapping a link (or anywhere outside) closes the drawer again.
+        sidebar.addEventListener('click', (event) => {
+            if (event.target.closest('a') && window.innerWidth <= 1080) setOpen(false);
         });
         document.addEventListener('click', (event) => {
-            const sidebar = $('[data-admin-sidebar]');
-            if (sidebar && sidebar.classList.contains('is-open') && !event.target.closest('[data-admin-sidebar]') && !event.target.closest('[data-admin-burger]')) {
-                sidebar.classList.remove('is-open');
+            if (sidebar.classList.contains('is-open') && !event.target.closest('[data-admin-sidebar]')) {
+                setOpen(false);
             }
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') setOpen(false);
         });
     }
 
