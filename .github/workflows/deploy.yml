@@ -27,4 +27,8 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            **/config.php
+            **/uploads/**
             **/.env*
+            docs**
+            READEME.md*
